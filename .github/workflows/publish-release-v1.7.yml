@@ -1,0 +1,125 @@
+name: Publish Tally Android 1.7 Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-release-v1.7.yml'
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publish:
+    name: Publish Tally for Android v1.7
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_TAG: v1.7
+      EXPECTED_SHA256: 20d48d3cf9f86879ae980be3b893ea27e643a176cd9d84a2755cf32a62cb3ddb
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find latest successful APK build
+        id: build
+        shell: bash
+        run: |
+          set -euo pipefail
+          RUN_ID=$(gh run list \
+            --workflow build-apk.yml \
+            --branch main \
+            --status success \
+            --limit 1 \
+            --json databaseId \
+            --jq '.[0].databaseId')
+
+          if [ -z "$RUN_ID" ] || [ "$RUN_ID" = "null" ]; then
+            echo "No successful Build Android APK run was found."
+            exit 1
+          fi
+
+          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+          echo "Using successful build run $RUN_ID"
+
+      - name: Download APK artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p downloaded release
+          gh run download "${{ steps.build.outputs.run_id }}" \
+            --name Tally_Android_v1_7_APK \
+            --dir downloaded
+
+          APK_PATH=$(find downloaded -type f -name '*.apk' | head -n 1)
+          if [ -z "$APK_PATH" ]; then
+            echo "The successful build did not contain an APK."
+            find downloaded -maxdepth 3 -type f -print || true
+            exit 1
+          fi
+
+          cp "$APK_PATH" release/Tally_Android_v1_7.apk
+
+      - name: Verify uploaded APK checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          ACTUAL_SHA256=$(sha256sum release/Tally_Android_v1_7.apk | awk '{print $1}')
+          echo "Expected: $EXPECTED_SHA256"
+          echo "Actual:   $ACTUAL_SHA256"
+
+          if [ "$ACTUAL_SHA256" != "$EXPECTED_SHA256" ]; then
+            echo "The latest workflow APK does not match the APK supplied for this release."
+            exit 1
+          fi
+
+      - name: Prepare release notes
+        shell: bash
+        run: |
+          cat > release-notes.md <<'EOF'
+          # Tally for Android 1.7
+
+          First Android conversion of Tally 1.7, built natively with Kotlin and Jetpack Compose.
+
+          ## Included
+
+          - Independent counters and folders
+          - Hold-to-drag counter organization between folders and Unfiled
+          - Folder presets and Quick Create for counters and timers
+          - Counter goals, custom steps, milestones, pinning, locking, archive, reset, duplicate, and deletion
+          - Standalone and counter-linked sessions
+          - History, statistics, automatic resets, CSV export, and JSON backup/import
+          - Light, Dark, OLED, preset accents, custom HEX colors, and alternate launcher icons
+
+          This asset is an installable Android APK.
+
+          **SHA-256:** `20d48d3cf9f86879ae980be3b893ea27e643a176cd9d84a2755cf32a62cb3ddb`
+          EOF
+
+      - name: Create or update GitHub Release
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release edit "$RELEASE_TAG" \
+              --title "Tally for Android 1.7" \
+              --notes-file release-notes.md \
+              --latest
+            gh release upload "$RELEASE_TAG" release/Tally_Android_v1_7.apk --clobber
+          else
+            gh release create "$RELEASE_TAG" \
+              release/Tally_Android_v1_7.apk \
+              --target main \
+              --title "Tally for Android 1.7" \
+              --notes-file release-notes.md \
+              --latest
+          fi
+
+      - name: Show release URL
+        shell: bash
+        run: gh release view "$RELEASE_TAG" --json url --jq '.url'
