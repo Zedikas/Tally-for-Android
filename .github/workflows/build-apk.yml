@@ -1,5 +1,6 @@
 name: Build Android APK
 
+# Tally Android 1.7 full conversion build.
 on:
   workflow_dispatch:
   push:
