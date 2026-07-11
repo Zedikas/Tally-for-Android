@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Tally">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+
+        <activity-alias android:name=".ClassicBlueIcon" android:enabled="true" android:exported="true" android:icon="@mipmap/ic_launcher_classic" android:roundIcon="@mipmap/ic_launcher_classic" android:label="Tally" android:targetActivity=".MainActivity">
+            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+        </activity-alias>
+        <activity-alias android:name=".NeonDarkIcon" android:enabled="false" android:exported="true" android:icon="@mipmap/ic_launcher_neon" android:roundIcon="@mipmap/ic_launcher_neon" android:label="Tally" android:targetActivity=".MainActivity">
+            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+        </activity-alias>
+        <activity-alias android:name=".GlassIcon" android:enabled="false" android:exported="true" android:icon="@mipmap/ic_launcher_glass" android:roundIcon="@mipmap/ic_launcher_glass" android:label="Tally" android:targetActivity=".MainActivity">
+            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+        </activity-alias>
+        <activity-alias android:name=".PearlIcon" android:enabled="false" android:exported="true" android:icon="@mipmap/ic_launcher_pearl" android:roundIcon="@mipmap/ic_launcher_pearl" android:label="Tally" android:targetActivity=".MainActivity">
+            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+        </activity-alias>
+        <activity-alias android:name=".AmberIcon" android:enabled="false" android:exported="true" android:icon="@mipmap/ic_launcher_amber" android:roundIcon="@mipmap/ic_launcher_amber" android:label="Tally" android:targetActivity=".MainActivity">
+            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+        </activity-alias>
+        <activity-alias android:name=".TechGreenIcon" android:enabled="false" android:exported="true" android:icon="@mipmap/ic_launcher_tech" android:roundIcon="@mipmap/ic_launcher_tech" android:label="Tally" android:targetActivity=".MainActivity">
+            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+        </activity-alias>
+        <activity-alias android:name=".CosmicPurpleIcon" android:enabled="false" android:exported="true" android:icon="@mipmap/ic_launcher_cosmic" android:roundIcon="@mipmap/ic_launcher_cosmic" android:label="Tally" android:targetActivity=".MainActivity">
+            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+        </activity-alias>
+        <activity-alias android:name=".SynthwaveIcon" android:enabled="false" android:exported="true" android:icon="@mipmap/ic_launcher_synthwave" android:roundIcon="@mipmap/ic_launcher_synthwave" android:label="Tally" android:targetActivity=".MainActivity">
+            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+        </activity-alias>
+    </application>
+</manifest>
